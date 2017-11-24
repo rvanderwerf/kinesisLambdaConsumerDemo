@@ -24,7 +24,9 @@ class KinesisLambdaDemoHandler implements RequestHandler<KinesisEvent, Void> {
                 }
                 JsonSlurper slurper = new JsonSlurper()
                 // convert the parameter map into human readable JSON for the kinesis stream
-                def payload = slurper.parse(new String(record.kinesis.getData().array()))
+                def stringPayload = new String(record.kinesis.getData().array())
+                logger.log("stringpayload:${stringPayload}".toString())
+                def payload = slurper.parseText(stringPayload)
                 // in a real app we'd do something with these parameters in the parsed payload
 
                 logger.log("data=${payload}".toString())
