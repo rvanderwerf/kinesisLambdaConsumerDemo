@@ -15,22 +15,22 @@ class KinesisLambdaDemoHandler implements RequestHandler<KinesisEvent, Void> {
 
         try {
 
-            logger.log("Kinesis Lambda Consumer Demo invoked!")
-            logger.log("event="+event.toString())
+            logger.log("Kinesis Lambda Consumer Demo invoked!".toString())
+            logger.log("event="+event.toString().toString())
             event.records.each { KinesisEvent.KinesisEventRecord record ->
-                logger.log("record:${record.toString()}")
+                logger.log("record:${record.toString()}".toString())
                 record.properties.keySet().each { key ->
                     logger.log("property:${key}=${record.properties.get(key)}".toString())
                 }
                 JsonSlurper slurper = new JsonSlurper()
                 // convert the parameter map into human readable JSON for the kinesis stream
-                def payload = slurper.parse(record.kinesis.getData().array())
+                def payload = slurper.parse(new String(record.kinesis.getData().array()))
                 // in a real app we'd do something with these parameters in the parsed payload
 
                 logger.log("data=${payload}".toString())
             }
         } catch (Throwable te) {
-            logger.log("Error running lambda: ${te.message} - aborting run",te)
+            logger.log("Error running lambda: ${te.message} - aborting run: ${te.message}".toString())
         }
         logger.log("finished lambda")
     }

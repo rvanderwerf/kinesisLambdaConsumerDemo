@@ -43,15 +43,12 @@ dependencies {
     // AWS Dynamodb AWS
     compile "com.amazonaws:aws-java-sdk-dynamodb:1.10.34"
     // this is the newer community supported sdk at https://github.com/vanderfox/alexa-skills-kit-java
-    compile 'com.amazon.alexa:alexa-skills-kit-java:1.1.7_SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.7.10'
     compile 'org.apache.commons:commons-lang3:3.3.2'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     //compile 'org.apache.groovy.modules.http-builder:http-builder:0.5.2'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     compile 'net.sf.json-lib:json-lib:2.4:jdk15'
-    compile 'org.springframework.social:spring-social-twitter:1.1.2.RELEASE'
-    compile 'org.springframework.social:spring-social-web:1.1.4.RELEASE'
     compile 'org.slf4j:jul-to-slf4j:1.7.19'
     compile 'org.slf4j:slf4j-api:1.7.19'
     compile 'ch.qos.logback:logback-classic:1.0.13'
@@ -80,9 +77,29 @@ aws {
     profileName = "vanderfox"
 }
 
-task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
-    functionName = "GroovySkill"
-    handler = "com.vanderfox.demo.SpeechletRequestStreamHandler"
+task deployKinesis(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
+    functionName = "G3SummitKinesisDemo"
+    handler = "com.vanderfox.demo.KinesisLambdaDemoHandler"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
+    runtime = Runtime.Java8
+    zipFile = buildZip.archivePath
+    memorySize = 512
+    timeout = 60
+}
+
+task deploySNS(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
+    functionName = "G3SummitSNSDemo"
+    handler = "com.vanderfox.demo.SnsLambdaDemoHandler"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
+    runtime = Runtime.Java8
+    zipFile = buildZip.archivePath
+    memorySize = 512
+    timeout = 60
+}
+
+task deployS3(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
+    functionName = "G3SummitS3Demo"
+    handler = "com.vanderfox.demo.S3LambdaDemoHandler"
     role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
     runtime = Runtime.Java8
     zipFile = buildZip.archivePath
@@ -97,12 +114,6 @@ task fatJar(type: Jar) {
     with jar
 }
 build.dependsOn shadowJar
-
-task runMain() {
-
-
-}
-
 
 shadowJar {
     baseName = 'heroQuiz-fat'
