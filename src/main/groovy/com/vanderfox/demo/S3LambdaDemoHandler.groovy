@@ -7,7 +7,7 @@ import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.amazonaws.services.s3.event.S3EventNotification
 
 
-class S3LambdaDemoHandler implements RequestHandler<S3Event, Void> {
+class sS3LambdaDemoHandler implements RequestHandler<S3Event, Void> {
 
     @Override
     Void handleRequest(S3Event event, Context context) {
